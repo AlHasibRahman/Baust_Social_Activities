@@ -1,26 +1,46 @@
+using Domain;
+using Application.Activities.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Application.Commands;
+using Application;
 
 namespace BaustSocialApi
 {
-    public class ActivitiesController(AppDbContext context) : BaseController
+    public class ActivitiesController() : BaseController
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllActivities()
+        public async Task<ActionResult<List<Activity>>> GetAllActivities()
         {
-            return Ok(await context.Activities.ToListAsync());
+            return await Mediator.Send(new GetActivityList.Query());
         }
         [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetActivitiesById([FromRoute] Guid id)
+        public async Task<ActionResult<Activity>> GetActivitiesById([FromRoute] Guid id)
         {
-            var exitActivitie = await context.Activities.FirstOrDefaultAsync(c => c.Id == id);
-            if (exitActivitie == null)
-            {
-                return NotFound();
-            }
-            return Ok(exitActivitie);
-        } 
+            return await Mediator.Send(new GetActivityDetails.Query { Id = id });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Guid>> CreateActivity([FromBody] Activity activity)
+        {
+            return await Mediator.Send(new CreateActivity.Command { Activity = activity });
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> EditActivity([FromBody] Activity activity)
+        {
+            await Mediator.Send(new EditActivity.Command { Activity = activity });
+            return NoContent();
+        }
+
+        [HttpDelete("{id:Guid}")]
+        public async Task<ActionResult> DeleteActivity([FromRoute] Guid id)
+        {
+            await Mediator.Send(new DeleteActivity.Command { Id = id });
+            return Ok();
+        }
     }
 }

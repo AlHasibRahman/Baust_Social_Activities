@@ -1,3 +1,6 @@
+using Application.Activities.Queries;
+using Application.Commands;
+using Application.Core;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -8,6 +11,14 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 opt.UseSqlite(builder.Configuration.GetConnectionString("defaultConnection")));
 builder.Services.AddControllers();
 builder.Services.AddCors();
+builder.Services.AddAutoMapper(x =>
+{
+    x.AddProfile<MappingProfiles>();
+});
+//MediatorR Services are Reg.
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetActivityDetails.Handler>());
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<EditActivity.Handler>());
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
