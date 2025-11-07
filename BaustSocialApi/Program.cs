@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(opt =>
 opt.UseSqlite(builder.Configuration.GetConnectionString("defaultConnection")));
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 builder.Services.AddAutoMapper(x =>
 {
@@ -22,7 +24,11 @@ builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<EditAc
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod()
             .WithOrigins("http://localhost:3000"));
