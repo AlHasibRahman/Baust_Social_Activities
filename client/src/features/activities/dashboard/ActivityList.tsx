@@ -1,21 +1,18 @@
-import { Box } from "@mui/material";
-import type { Activity } from "../../../Lib/types/Activity";
+import { Box, Typography } from "@mui/material";
 import ActivityCard from "./ActivityCard";
-type Props = {
-    activities : Activity[]
-    selectActivity : (id : string) => void;
-}
+import { useActivities } from "../../../Lib/hooks/useActivities";
 
-export default function ActivityList({activities, selectActivity} : Props) {
+export default function ActivityList() {
+  const { activities, isLoading } = useActivities();
+  if (!activities || isLoading) return <Typography>Loading...</Typography>
   return (
-    <Box sx={{display: 'flex', flexDirection: 'column', gap: 3}}>
-        {activities.map(activity => (
-            <ActivityCard 
-              key={activity.id}
-              activity={activity}
-              selectActivity= {selectActivity}
-            />
-        ))}
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {activities.map(activity => (
+        <ActivityCard
+          key={activity.id}
+          activity={activity}
+        />
+      ))}
 
     </Box>
   )
