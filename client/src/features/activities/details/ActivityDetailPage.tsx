@@ -4,7 +4,6 @@ import ActivityDetailsinfo from "./ActivityDetailsinfo";
 import ActivityDetailsChat from "./ActivityDetailsChat";
 import { Grid2, Typography } from "@mui/material";
 import { useParams } from "react-router";
-import ActivityDetailsSidebar from "./ActivityDetailsSidebar";
 
 
 
@@ -23,7 +22,6 @@ export default function ActivityDetailPage() {
       </Grid2>
 
       <Grid2 size={4}>
-        <ActivityDetailsSidebar />
       </Grid2>
       
     </Grid2>

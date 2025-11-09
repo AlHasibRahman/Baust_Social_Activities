@@ -56,8 +56,9 @@ export default function ActivityDetailsHeader({activity} : Props) {
                     <>
                         <Button
                             variant='contained'
-                            color={isCancelled ? 'success' : 'error'}
-                            onClick={() => { }}
+                            color='error'
+                            component={Link}
+                            to={`/activities`}
                         >
                             {isCancelled ? 'Re-activate Activity' : 'Cancel Activity'}
                         </Button>
