@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Application.Commands;
 using Application;
+using Application.Activities.Dtos;
 
 namespace BaustSocialApi
 {
@@ -24,9 +25,9 @@ namespace BaustSocialApi
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> CreateActivity([FromBody] Activity activity)
+        public async Task<ActionResult<Guid>> CreateActivity([FromBody] CreateActivityDto activityDto)
         {
-            return await Mediator.Send(new CreateActivity.Command { Activity = activity });
+            return await Mediator.Send(new CreateActivity.Command { ActivityDto = activityDto });
         }
 
         [HttpPut]

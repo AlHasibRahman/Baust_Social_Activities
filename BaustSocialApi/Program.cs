@@ -1,6 +1,9 @@
 using Application.Activities.Queries;
+using Application.Activities.Validators;
 using Application.Commands;
 using Application.Core;
+using BaustSocialApi.Middleware;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -17,10 +20,17 @@ builder.Services.AddAutoMapper(x =>
 {
     x.AddProfile<MappingProfiles>();
 });
+builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityValidator>();
 //MediatorR Services are Reg.
-builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
+builder.Services.AddMediatR(x=> {
+    x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>();
+    x.AddOpenBehavior(typeof(ValidationBehavior<,>));
+
+});
 builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetActivityDetails.Handler>());
 builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<EditActivity.Handler>());
+builder.Services.AddTransient<ExceptionMiddleware>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,7 +39,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod()
             .WithOrigins("http://localhost:3000"));
 app.MapControllers();

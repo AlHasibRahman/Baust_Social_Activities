@@ -1,5 +1,8 @@
 using System;
+using Application.Activities.Dtos;
+using AutoMapper;
 using Domain;
+using FluentValidation;
 using MediatR;
 using Persistence;
 
@@ -9,17 +12,16 @@ public class CreateActivity
 {
     public class Command : IRequest<Guid>
     {
-        public required Activity Activity { get; set; }
+        public required CreateActivityDto ActivityDto { get; set; }
     }
-    public class Handler(AppDbContext dbContext) : IRequestHandler<Command, Guid>
+    public class Handler(AppDbContext dbContext, IMapper mapper) : IRequestHandler<Command, Guid>
     {
-        private readonly AppDbContext dbContext = dbContext;
-
         public async Task<Guid> Handle(Command request, CancellationToken cancellationToken)
         {
-            dbContext.Activities.Add(request.Activity);
+            var activity = mapper.Map<Activity>(request.ActivityDto);
+            dbContext.Activities.Add(activity);
             await dbContext.SaveChangesAsync(cancellationToken);
-            return request.Activity.Id;
+            return activity.Id;
         }
     }
 }
